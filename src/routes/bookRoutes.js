@@ -41,8 +41,8 @@ router.get("/", protectRoute, async (req, res) => {
     const limit = req.query.limit || 5;
     const skip = (page - 1) * limit;
 
-    const books = (await Book.find())
-      .toSorted({ createdAt: -1 })
+    const books = await Book.find()
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .populate("user", "username profileImage");
@@ -60,7 +60,7 @@ router.get("/", protectRoute, async (req, res) => {
 });
 router.get("/user", protectRoute, async (req, res) => {
   try {
-    const books = (await Book.find({ user: req.user._id })).toSorted({ createdAt: -1 });
+    const books = await Book.find({ user: req.user._id }).sort({ createdAt: -1 });
     res.status(200).json(books);
   } catch (error) {
     console.log("Error in getting user books", error);
