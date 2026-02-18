@@ -14,9 +14,15 @@ router.post("/", protectRoute, async (req, res) => {
     if (!title || !caption || !rating || !image) {
       return res.status(400).json({ message: "All fields are required" });
     }
-    //upload the image
-    //save to db
-    const uploadResponse = await cloudinary.uploader.upload(image);
+    //upload the image with optimization
+    const uploadResponse = await cloudinary.uploader.upload(image, {
+      folder: "bookworm",
+      transformation: [
+        { width: 1000, crop: "limit" }, // Limit max width to 1000px
+        { quality: "auto:good" }, // Auto quality optimization
+        { fetch_format: "auto" } // Auto format selection (WebP when supported)
+      ]
+    });
     const imageUrl = uploadResponse.secure_url;
 
     const newBook = new Book({
